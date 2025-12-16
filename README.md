@@ -106,12 +106,3 @@ Below is a detailed breakdown of the original issues and the complete implementa
 
 ---
 
-## ☁️ Deployment (Vercel)
-
-This project is configured for deployment on Vercel.
-
-1.  **Configuration**: A `vercel.json` file is included to tell Vercel to use the Python runtime for `app.py`.
-2.  **Steps**:
-    -   Push code to GitHub.
-    -   Import project in Vercel.
-    -   **Important**: Add `NEWS_API_KEY` in Vercel's Environment Variables settings.
