@@ -1,185 +1,446 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News Summarizer</title>
+    <title>Global Insight | Premium News</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --primary: #2563eb;
-            --bg: #f3f4f6;
+            /* Premium Palette */
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #ec4899;
+            --background: #f8fafc;
             --card-bg: #ffffff;
-            --text: #1f2937;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --gradient-header: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%);
+
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--background);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-dark);
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* Ambient Background shapes */
+        .ambient-shape {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .shape-1 {
+            top: -100px;
+            left: -100px;
+            width: 500px;
+            height: 500px;
+            background: rgba(79, 70, 229, 0.2);
+        }
+
+        .shape-2 {
+            bottom: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: rgba(236, 72, 153, 0.2);
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 40px 20px;
         }
 
+        /* Header Styles */
         header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 60px;
+            position: relative;
         }
 
         h1 {
-            color: var(--primary);
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin: 0;
+            background: var(--gradient-header);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-top: 10px;
+            animation: fadeInDown 0.8s ease-out 0.2s backwards;
+        }
+
+        /* Glass Filter Bar */
+        .filters-wrapper {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            margin-bottom: 50px;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
         }
 
         .filters {
-            background: var(--card-bg);
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--glass-shadow);
             display: flex;
-            gap: 15px;
+            gap: 20px;
             flex-wrap: wrap;
             align-items: flex-end;
-            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .filters:hover {
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.1);
         }
 
         .form-group {
             flex: 1;
-            min-width: 200px;
+            min-width: 220px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
+            margin-bottom: 8px;
+            font-weight: 500;
             font-size: 0.9rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         input {
-            width: 90%;
-            padding: 10px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            /* Minimal border */
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
             font-size: 1rem;
+            font-family: inherit;
+            color: var(--text-dark);
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            border-color: var(--primary);
         }
 
         button {
-            background-color: var(--primary);
+            background: var(--gradient-header);
             color: white;
-            padding: 10px 25px;
+            padding: 12px 32px;
             border: none;
-            border-radius: 6px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 1rem;
             font-weight: 600;
-            transition: background-color 0.2s;
-            height: 42px;
+            height: 48px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
         }
 
         button:hover {
-            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
         }
 
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Grid Layout */
         #news-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
         }
 
+        /* News Card */
         .news-card {
-            background: var(--card-bg);
-            border-radius: 10px;
+            background: white;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .news-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Image Handling & Lazy Loading */
+        .card-img-wrapper {
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+            background-color: #e2e8f0;
         }
 
         .card-img {
-            height: 200px;
-            background-color: #e5e7eb;
-            background-size: cover;
-            background-position: center;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+            opacity: 0;
+            /* Hidden initially for lazy load fade-in */
+        }
+
+        .card-img.loaded {
+            opacity: 1;
+        }
+
+        .news-card:hover .card-img {
+            transform: scale(1.05);
         }
 
         .card-content {
-            padding: 20px;
+            padding: 24px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
 
+        .card-meta {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
         .card-title {
-            font-size: 1.25rem;
-            margin: 0 0 10px 0;
-            color: #111827;
+            font-size: 1.35rem;
+            margin: 0 0 12px 0;
+            color: var(--text-dark);
+            line-height: 1.4;
+            font-weight: 700;
         }
 
         .card-desc {
             font-size: 0.95rem;
-            color: #4b5563;
-            margin-bottom: 20px;
+            color: var(--text-light);
+            margin-bottom: 24px;
             flex-grow: 1;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .read-more {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             text-decoration: none;
             color: var(--primary);
             font-weight: 600;
+            transition: gap 0.2s;
         }
 
-        .loading {
-            text-align: center;
-            grid-column: 1 / -1;
-            padding: 40px;
-            font-size: 1.2rem;
-            color: #6b7280;
+        .read-more:hover {
+            gap: 5px;
+        }
+
+        .read-more::after {
+            content: '→';
+            margin-left: 5px;
+            transition: margin 0.2s;
+        }
+
+        /* Skeleton Loading Animation */
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        .news-card.skeleton-card .card-img-wrapper {
+            background: none;
+            /* Let skeleton div handle it */
+        }
+
+        .skeleton-img {
+            width: 100%;
+            height: 220px;
+        }
+
+        .skeleton-title {
+            height: 24px;
+            margin-bottom: 12px;
+            width: 90%;
+        }
+
+        .skeleton-title-2 {
+            height: 24px;
+            margin-bottom: 20px;
+            width: 70%;
+        }
+
+        .skeleton-text {
+            height: 16px;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .skeleton-text-last {
+            height: 16px;
+            width: 80%;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .filters-wrapper {
+                top: 0;
+                /* Attach to top */
+                margin-bottom: 20px;
+                padding-top: 10px;
+                /* Status bar spacing */
+                background: linear-gradient(to bottom, var(--background) 0%, rgba(248, 250, 252, 0) 100%);
+            }
+
+            .filters {
+                padding: 12px;
+                gap: 10px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                /* Two columns */
+                flex-direction: unset;
+                align-items: unset;
+            }
+
+            .form-group {
+                min-width: unset;
+            }
+
+            /* Keyword input spans full width */
+            .form-group:first-child {
+                grid-column: 1 / -1;
+            }
+
+            button {
+                width: 100%;
+                grid-column: 1 / -1;
+            }
         }
 
         .error {
-            background-color: #fee2e2;
-            color: #991b1b;
-            padding: 15px;
-            border-radius: 6px;
             text-align: center;
+            padding: 30px;
+            background: #fef2f2;
+            color: #ef4444;
+            border-radius: 12px;
+            border: 1px solid #fecaca;
             grid-column: 1 / -1;
+            font-weight: 500;
         }
     </style>
 </head>
+
 <body>
+    <div class="ambient-shape shape-1"></div>
+    <div class="ambient-shape shape-2"></div>
+
     <div class="container">
         <header>
-            <h1>Global News Summarizer</h1>
-            <p>Stay informed with the latest headlines from around the world.</p>
+            <h1>Global Insight</h1>
+            <p class="subtitle">Curated headlines from around the world.</p>
         </header>
 
-        <div class="filters">
-            <div class="form-group">
-                <label for="keyword">Keyword</label>
-                <input type="text" id="keyword" placeholder="e.g. Technology, Bitcoin...">
+        <div class="filters-wrapper">
+            <div class="filters">
+                <div class="form-group">
+                    <label for="keyword">Search Topic</label>
+                    <input type="text" id="keyword" placeholder="e.g. Technology, AI, Space...">
+                </div>
+                <div class="form-group">
+                    <label for="from-date">From</label>
+                    <input type="date" id="from-date">
+                </div>
+                <div class="form-group">
+                    <label for="to-date">To</label>
+                    <input type="date" id="to-date">
+                </div>
+                <button onclick="fetchNews()">Explore News</button>
             </div>
-            <div class="form-group">
-                <label for="from-date">From Date</label>
-                <input type="date" id="from-date">
-            </div>
-            <div class="form-group">
-                <label for="to-date">To Date</label>
-                <input type="date" id="to-date">
-            </div>
-            <button onclick="fetchNews()">Search News</button>
         </div>
 
         <div id="news-container">
@@ -188,8 +449,55 @@
     </div>
 
     <script>
-        // Set default date to today for 'To' date
+        // Set default date
         document.getElementById('to-date').valueAsDate = new Date();
+
+        // Lazy Loading Observer
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const src = img.getAttribute('data-src');
+
+                    // Preload image
+                    const newImg = new Image();
+                    newImg.src = src;
+                    newImg.onload = () => {
+                        img.src = src;
+                        img.classList.add('loaded');
+                    };
+                    newImg.onerror = () => {
+                        img.src = 'https://placehold.co/600x400?text=No+Image'; // Fallback
+                        img.classList.add('loaded');
+                    };
+
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: '50px 0px', // Start loading slightly before in view
+            threshold: 0.1
+        });
+
+        function showSkeletons() {
+            const container = document.getElementById('news-container');
+            container.innerHTML = '';
+            // Show 6 skeleton cards
+            for (let i = 0; i < 6; i++) {
+                container.innerHTML += `
+                    <div class="news-card skeleton-card">
+                        <div class="skeleton skeleton-img"></div>
+                        <div class="card-content">
+                            <div class="skeleton skeleton-title"></div>
+                            <div class="skeleton skeleton-title-2"></div>
+                            <div class="skeleton skeleton-text"></div>
+                            <div class="skeleton skeleton-text"></div>
+                            <div class="skeleton skeleton-text-last"></div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
 
         async function fetchNews() {
             const container = document.getElementById('news-container');
@@ -197,8 +505,8 @@
             const fromDate = document.getElementById('from-date').value;
             const toDate = document.getElementById('to-date').value;
 
-            // Show loading
-            container.innerHTML = '<div class="loading">Fetching latest news...</div>';
+            // 1. Show Skeletons
+            showSkeletons();
 
             // Build Query params
             const params = new URLSearchParams();
@@ -207,49 +515,63 @@
             if (toDate) params.append('to', toDate);
 
             try {
-                const response = await fetch(`/api/news?${params.toString()}`);
+                // Minimum loading time for smooth UX (prevent flickering)
+                const fetchPromise = fetch(`/api/news?${params.toString()}`);
+                const delayPromise = new Promise(resolve => setTimeout(resolve, 800));
+
+                const [response] = await Promise.all([fetchPromise, delayPromise]);
                 const data = await response.json();
 
-                container.innerHTML = ''; // Clear loading
+                container.innerHTML = ''; // Clear skeletons
 
                 if (data.error) {
-                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                    container.innerHTML = `<div class="error">⚠️ Error: ${data.error}</div>`;
                     return;
                 }
 
                 if (data.articles.length === 0) {
-                    container.innerHTML = '<div class="loading">No articles found. Try different filters.</div>';
+                    container.innerHTML = `<div class="error">No news found for these filters. Try broadening your search.</div>`;
                     return;
                 }
 
-                data.articles.forEach(article => {
-                    // Skip articles with no content/removed
+                data.articles.forEach((article, index) => {
                     if (article.title === "[Removed]") return;
 
                     const card = document.createElement('div');
                     card.className = 'news-card';
-                    
-                    const imageUrl = article.urlToImage || 'https://via.placeholder.com/400x200?text=No+Image';
-                    
+                    // Staggered animation
+                    card.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s backwards`;
+
+                    const imageUrl = article.urlToImage || 'https://placehold.co/600x400?text=No+Image';
+                    const date = new Date(article.publishedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+
                     card.innerHTML = `
-                        <div class="card-img" style="background-image: url('${imageUrl}')"></div>
+                        <div class="card-img-wrapper">
+                            <img class="card-img" data-src="${imageUrl}" alt="News Image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+                        </div>
                         <div class="card-content">
+                            <div class="card-meta">${article.source.name} • ${date}</div>
                             <h2 class="card-title">${article.title}</h2>
-                            <p class="card-desc">${article.description || 'No description available.'}</p>
-                            <a href="${article.url}" target="_blank" class="read-more">Read Full Article &rarr;</a>
+                            <p class="card-desc">${article.description || 'No description available for this article.'}</p>
+                            <a href="${article.url}" target="_blank" class="read-more">Read Article</a>
                         </div>
                     `;
                     container.appendChild(card);
+
+                    // Observe the image for lazy loading
+                    const imgElement = card.querySelector('img');
+                    imageObserver.observe(imgElement);
                 });
 
             } catch (err) {
-                container.innerHTML = `<div class="error">Failed to connect to server. Ensure app.py is running.</div>`;
+                container.innerHTML = `<div class="error">❌ Failed to connect to server. Ensure app.py is running.</div>`;
                 console.error(err);
             }
         }
 
-        // Load initial news on page load
+        // Initial Load
         fetchNews();
     </script>
 </body>
+
 </html>
