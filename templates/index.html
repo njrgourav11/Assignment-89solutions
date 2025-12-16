@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Summarizer</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .filters {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            height: 42px;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        #news-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .news-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-img {
+            height: 200px;
+            background-color: #e5e7eb;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin: 0 0 10px 0;
+            color: #111827;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: #4b5563;
+            margin-bottom: 20px;
+            flex-grow: 1;
+            line-height: 1.5;
+        }
+
+        .read-more {
+            display: inline-block;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #6b7280;
+        }
+
+        .error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Global News Summarizer</h1>
+            <p>Stay informed with the latest headlines from around the world.</p>
+        </header>
+
+        <div class="filters">
+            <div class="form-group">
+                <label for="keyword">Keyword</label>
+                <input type="text" id="keyword" placeholder="e.g. Technology, Bitcoin...">
+            </div>
+            <div class="form-group">
+                <label for="from-date">From Date</label>
+                <input type="date" id="from-date">
+            </div>
+            <div class="form-group">
+                <label for="to-date">To Date</label>
+                <input type="date" id="to-date">
+            </div>
+            <button onclick="fetchNews()">Search News</button>
+        </div>
+
+        <div id="news-container">
+            <!-- News items will appear here -->
+        </div>
+    </div>
+
+    <script>
+        // Set default date to today for 'To' date
+        document.getElementById('to-date').valueAsDate = new Date();
+
+        async function fetchNews() {
+            const container = document.getElementById('news-container');
+            const keyword = document.getElementById('keyword').value;
+            const fromDate = document.getElementById('from-date').value;
+            const toDate = document.getElementById('to-date').value;
+
+            // Show loading
+            container.innerHTML = '<div class="loading">Fetching latest news...</div>';
+
+            // Build Query params
+            const params = new URLSearchParams();
+            if (keyword) params.append('keyword', keyword);
+            if (fromDate) params.append('from', fromDate);
+            if (toDate) params.append('to', toDate);
+
+            try {
+                const response = await fetch(`/api/news?${params.toString()}`);
+                const data = await response.json();
+
+                container.innerHTML = ''; // Clear loading
+
+                if (data.error) {
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                    return;
+                }
+
+                if (data.articles.length === 0) {
+                    container.innerHTML = '<div class="loading">No articles found. Try different filters.</div>';
+                    return;
+                }
+
+                data.articles.forEach(article => {
+                    // Skip articles with no content/removed
+                    if (article.title === "[Removed]") return;
+
+                    const card = document.createElement('div');
+                    card.className = 'news-card';
+                    
+                    const imageUrl = article.urlToImage || 'https://via.placeholder.com/400x200?text=No+Image';
+                    
+                    card.innerHTML = `
+                        <div class="card-img" style="background-image: url('${imageUrl}')"></div>
+                        <div class="card-content">
+                            <h2 class="card-title">${article.title}</h2>
+                            <p class="card-desc">${article.description || 'No description available.'}</p>
+                            <a href="${article.url}" target="_blank" class="read-more">Read Full Article &rarr;</a>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (err) {
+                container.innerHTML = `<div class="error">Failed to connect to server. Ensure app.py is running.</div>`;
+                console.error(err);
+            }
+        }
+
+        // Load initial news on page load
+        fetchNews();
+    </script>
+</body>
+</html>

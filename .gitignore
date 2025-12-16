@@ -1,0 +1,19 @@
+# General
+__pycache__/
+*.py[cod]
+.DS_Store
+
+# Environment variables (Sensitive!)
+.env
+
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# Vercel
+.vercel/
+
+# Editor directories
+.idea/
+.vscode/
